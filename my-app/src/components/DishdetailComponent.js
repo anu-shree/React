@@ -16,6 +16,7 @@ import {
     Label
   } from "reactstrap";
   import { Control, LocalForm, Errors } from "react-redux-form";
+  import { FadeTransform, Fade, Stagger } from 'react-animation-components';
   import { Link } from "react-router-dom";
 const required = val => val && val.length;
 const maxLength = len => val => !val || val.length <= len;
@@ -128,6 +129,11 @@ class CommentForm extends Component {
     function RenderDish({dish}) {
         return(
             <div className="col-12 col-md-5 m-1">
+            <FadeTransform
+                in
+                transformProps={{
+                    exitTransform: 'scale(0.5) translateY(-50%)'
+                }}>
                 <Card>
                     <CardImg width="100" src={dish.image} alt={dish.name} />
                     <CardBody>
@@ -135,38 +141,41 @@ class CommentForm extends Component {
                         <CardText>{dish.description}</CardText>
                     </CardBody>
                 </Card>
+                </FadeTransform>
             </div>
         );
     }
 
     function RenderComments({comments}){
-        if (comments != null){
-            let comms = comments.map((comm, i) => {
-                let date = new Intl.DateTimeFormat('en-US', {
+    
+        if (comments != null) {
+            return(
+            <div className="col-12 col-md-5 m-1">
+            <h4>Comments</h4>
+                        <ul className="list-unstyled">
+                        <Stagger in>
+                        {comments.map((comm) => {
+                return (
+                        <Fade in>
+                            <li className="comment">{comm.comment}</li>
+                            <li className="author">-- {comm.author}, {new Intl.DateTimeFormat('en-US', {
                     year:'numeric',
                     month: 'short',
                     day: '2-digit'
-                }).format(new Date(Date.parse(comm.date)))
-                
-                return (
-                        <ul key={comm.id} className="list-unstyled">
-                            <li className="comment">{comm.comment}</li>
-                            <li className="author">-- {comm.author}, {date}</li>
-                        </ul>
-                    );
-                })
-            
-            
-            return (
-                <div className="col-12 col-md-5 m-1">
-                    <h4>Comments</h4>
-                    <div>{comms}</div>
-                    <CommentForm  />
+                }).format(new Date(Date.parse(comm.date)))}</li><br />
+                    
+                        </Fade>)})}
 
-                </div>
-                
-            );
+                        </Stagger>
+                        </ul>
+                        <CommentForm  />
+                        </div>
+                    
+                    
+            )
+
         }
+
         else {
             return(
                 <div></div>
